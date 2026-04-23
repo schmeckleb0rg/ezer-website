@@ -1,26 +1,342 @@
 @import "tailwindcss";
 
+/* ── General Sans (Display font - self-hosted from Fontshare) ── */
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/GeneralSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/GeneralSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/GeneralSans-Semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/GeneralSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Brand Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand-primary: #5d99ba;
+  --brand-secondary: #49a4c2;
+  --brand-dark: #1e4c49;
+  --brand-light: #e3eded;
+  --brand-bg: #fbfbfb;
+  --brand-text: #1a1a2e;
+  --brand-text-muted: #4a5568;
 }
 
+/* ── Tailwind v4 Theme ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-light: var(--brand-light);
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-text: var(--brand-text);
+  --color-brand-text-muted: var(--brand-text-muted);
+
+  --font-display: "General Sans", system-ui, sans-serif;
+  --font-heading: var(--font-instrument-sans);
+  --font-body: var(--font-lexend);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base Styles ── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-body);
+}
+
+/* ── Fix grey area on button click-and-hold (mobile tap highlight) ── */
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* ── Typography Utilities ── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* ── Gradient Overlays ── */
+.gradient-brand {
+  background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-primary) 50%, var(--brand-secondary) 100%);
+}
+
+.gradient-dark {
+  background: linear-gradient(180deg, var(--brand-dark) 0%, #0f2e2c 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(135deg, #0f2e2c 0%, var(--brand-dark) 40%, #1a5c58 100%);
+}
+
+/* ── Glass Effect (nav) ── */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ── 3D Glass Cards — Frosted glass with depth ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(73, 164, 194, 0.15);
+  box-shadow:
+    0 8px 32px -4px rgba(30, 76, 73, 0.12),
+    0 2px 4px rgba(30, 76, 73, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(30, 76, 73, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(73, 164, 194, 0.25);
+  box-shadow:
+    0 12px 40px -4px rgba(30, 76, 73, 0.16),
+    0 4px 8px rgba(30, 76, 73, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(30, 76, 73, 0.06);
+  transform: translateY(-3px);
+}
+
+.glass-card-dark {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px -4px rgba(0, 0, 0, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.glass-card-dark:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 12px 40px -4px rgba(0, 0, 0, 0.45),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+}
+
+.glass-card-alert {
+  background: rgba(254, 242, 242, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(252, 165, 165, 0.4);
+  box-shadow:
+    0 4px 16px -4px rgba(239, 68, 68, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.glass-icon {
+  background: rgba(73, 164, 194, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(73, 164, 194, 0.25);
+  box-shadow:
+    0 4px 12px -2px rgba(73, 164, 194, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(73, 164, 194, 0.1);
+}
+
+/* ── Glass orb decorative elements ── */
+.glass-orb {
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(73, 164, 194, 0.18), rgba(73, 164, 194, 0.03));
+  border: 1px solid rgba(73, 164, 194, 0.12);
+  backdrop-filter: blur(60px);
+  box-shadow: 0 0 60px rgba(73, 164, 194, 0.08);
+  position: absolute;
+  pointer-events: none;
+}
+
+.glass-orb-dark {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 60px rgba(255, 255, 255, 0.04);
+}
+
+/* ── Editorial Design Elements ── */
+.accent-line {
+  width: 48px;
+  height: 2px;
+  background: var(--brand-secondary);
+}
+
+.accent-line-vertical {
+  width: 2px;
+  height: 48px;
+  background: var(--brand-secondary);
+}
+
+/* ── Feather fade at section edges ── */
+.hero-feather {
+  position: relative;
+  height: 120px;
+  margin-top: -120px;
+  background: linear-gradient(to bottom, transparent, var(--brand-bg));
+  pointer-events: none;
+  z-index: 20;
+}
+
+.hero-feather-dark {
+  position: relative;
+  height: 120px;
+  margin-top: -120px;
+  background: linear-gradient(to bottom, transparent, var(--brand-dark));
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* ── Media Placeholder Zones ── */
+.media-zone {
+  border: 2px dashed rgba(73, 164, 194, 0.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(73, 164, 194, 0.03);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.media-zone:hover {
+  border-color: rgba(73, 164, 194, 0.5);
+  background: rgba(73, 164, 194, 0.06);
+}
+
+.media-zone-dark {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.media-zone-dark:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Step number badge ── */
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(73, 164, 194, 0.1);
+  border: 1px solid rgba(73, 164, 194, 0.2);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-secondary);
+}
+
+/* ── Animations ── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(73, 164, 194, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(73, 164, 194, 0.4);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0px, 0px);
+  }
+  33% {
+    transform: translate(15px, -20px);
+  }
+  66% {
+    transform: translate(-10px, -10px);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.6s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
 }
