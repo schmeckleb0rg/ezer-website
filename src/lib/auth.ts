@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { supabase } from "./supabase";
 
-const JWT_SECRET = process.env.ADMIN_JWT_SECRET || "fallback-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET || "fallback-secret-change-me";
 const TOKEN_EXPIRY = "8h";
 
 export interface AdminUser {
