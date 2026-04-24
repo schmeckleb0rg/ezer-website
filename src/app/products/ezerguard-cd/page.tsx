@@ -148,17 +148,13 @@ export default function EzerGuardCDPage() {
               </div>
 
               {/* Device image — shown only when uploaded in admin */}
-              {deviceMedia ? (
+              {deviceMedia && (
                 <div className="rounded-2xl overflow-hidden aspect-[4/3]">
                   {["mp4", "webm", "mov"].includes(deviceMedia.split(".").pop()?.toLowerCase() || "") ? (
                     <video src={deviceMedia} autoPlay muted loop playsInline className="w-full h-full object-cover" />
                   ) : (
                     <img src={deviceMedia} alt="EzerGuard-CD device" className="w-full h-full object-cover" />
                   )}
-                </div>
-              ) : (
-                <div className="rounded-2xl bg-brand-light/40 aspect-[4/3] flex items-center justify-center">
-                  <span className="font-heading text-sm text-brand-dark/20">Device image coming soon</span>
                 </div>
               )}
             </div>

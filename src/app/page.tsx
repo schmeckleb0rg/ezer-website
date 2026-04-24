@@ -31,6 +31,8 @@ async function getHomeMedia(): Promise<Record<string, string>> {
   }
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const media = await getHomeMedia();
 
