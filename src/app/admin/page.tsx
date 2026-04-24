@@ -396,11 +396,42 @@ function PageEditor({
 
   return (
     <div className="space-y-10">
-      {/* Text Content */}
+      {/* Page title */}
       <div>
-        <div className="mb-6">
-          <h2 className="font-display text-2xl font-bold text-brand-dark">{pageLabel}</h2>
-          <p className="mt-1 text-sm text-gray-400">Edit text content and upload media for this page.</p>
+        <h2 className="font-display text-2xl font-bold text-brand-dark">{pageLabel}</h2>
+        <p className="mt-1 text-sm text-gray-400">Upload media and edit text content for this page.</p>
+      </div>
+
+      {/* Media Zones — shown first */}
+      {zones.length > 0 && (
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <Upload size={18} className="text-brand-secondary" />
+            <h3 className="font-display text-xl font-bold text-brand-dark">Media Uploads</h3>
+          </div>
+          <p className="text-sm text-gray-400 mb-6">
+            Upload images, videos, GIFs, or 3D models (GLB/GLTF). Files appear on the website immediately after upload.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {zones.map((zone) => (
+              <MediaZoneCard
+                key={zone.key}
+                zone={zone}
+                imageUrl={getImageUrl(zone.key)}
+                uploading={uploading === zone.key}
+                onUpload={(file) => uploadMedia(zone.key, file)}
+                onDelete={() => deleteMedia(zone.key)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Text Content — shown below media */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <FileText size={18} className="text-brand-secondary" />
+          <h3 className="font-display text-xl font-bold text-brand-dark">Text Content</h3>
         </div>
 
         {content.length === 0 ? (
@@ -463,28 +494,6 @@ function PageEditor({
           </div>
         )}
       </div>
-
-      {/* Media Zones */}
-      {zones.length > 0 && (
-        <div>
-          <h3 className="font-display text-xl font-bold text-brand-dark mb-1">Page Media</h3>
-          <p className="text-sm text-gray-400 mb-6">
-            Upload images, videos, GIFs, or 3D models (GLB/GLTF). Files appear on the website automatically when uploaded.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {zones.map((zone) => (
-              <MediaZoneCard
-                key={zone.key}
-                zone={zone}
-                imageUrl={getImageUrl(zone.key)}
-                uploading={uploading === zone.key}
-                onUpload={(file) => uploadMedia(zone.key, file)}
-                onDelete={() => deleteMedia(zone.key)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
