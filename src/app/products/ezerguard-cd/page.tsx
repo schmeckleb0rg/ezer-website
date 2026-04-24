@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Users,
@@ -12,7 +12,6 @@ import {
   Bell,
   Zap,
   Syringe,
-  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -55,9 +54,25 @@ const howItWorks = [
   },
 ];
 
+interface PageImage {
+  image_key: string;
+  image_url: string | null;
+}
+
 export default function EzerGuardCDPage() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [deviceMedia, setDeviceMedia] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/page-images?page=ezerguard-cd")
+      .then((r) => r.json())
+      .then((data) => {
+        const img = (data.images || []).find((i: PageImage) => i.image_key === "cd_device_media");
+        if (img?.image_url) setDeviceMedia(img.image_url);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -132,13 +147,20 @@ export default function EzerGuardCDPage() {
                 </div>
               </div>
 
-              {/* Image placeholder */}
-              <div className="media-zone aspect-[4/3]">
-                <ImageIcon size={40} className="text-brand-secondary/25" />
-                <span className="font-heading text-sm text-brand-dark/30">
-                  EzerGuard-CD Device Image
-                </span>
-              </div>
+              {/* Device image — shown only when uploaded in admin */}
+              {deviceMedia ? (
+                <div className="rounded-2xl overflow-hidden aspect-[4/3]">
+                  {["mp4", "webm", "mov"].includes(deviceMedia.split(".").pop()?.toLowerCase() || "") ? (
+                    <video src={deviceMedia} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={deviceMedia} alt="EzerGuard-CD device" className="w-full h-full object-cover" />
+                  )}
+                </div>
+              ) : (
+                <div className="rounded-2xl bg-brand-light/40 aspect-[4/3] flex items-center justify-center">
+                  <span className="font-heading text-sm text-brand-dark/20">Device image coming soon</span>
+                </div>
+              )}
             </div>
           </div>
         </section>

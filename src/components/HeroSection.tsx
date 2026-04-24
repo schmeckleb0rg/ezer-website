@@ -1,9 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Image as ImageIcon } from "lucide-react";
 
-export default function HeroSection() {
+function renderMedia(src: string) {
+  const ext = src.split(".").pop()?.split("?")[0]?.toLowerCase() || "";
+  if (["mp4", "webm", "mov", "avi"].includes(ext)) {
+    return (
+      <video
+        src={src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="w-full h-full object-cover"
+      />
+    );
+  }
+  return <img src={src} alt="Hero media" className="w-full h-full object-cover" />;
+}
+
+interface HeroSectionProps {
+  mediaSrc?: string | null;
+}
+
+export default function HeroSection({ mediaSrc }: HeroSectionProps) {
   return (
     <section className="relative gradient-hero overflow-hidden">
       {/* Subtle grid pattern */}
@@ -34,7 +55,7 @@ export default function HeroSection() {
             <div className="accent-line" />
           </motion.div>
 
-          {/* Main Headline — centered */}
+          {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,7 +101,7 @@ export default function HeroSection() {
             </a>
           </motion.div>
 
-          {/* Stats — prominent glass cards */}
+          {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -102,11 +123,27 @@ export default function HeroSection() {
               </div>
             ))}
           </motion.div>
+
+          {/* Media showcase */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="mt-12 max-w-4xl mx-auto"
+          >
+            {mediaSrc ? (
+              <div className="rounded-2xl overflow-hidden glass-card-dark aspect-video">
+                {renderMedia(mediaSrc)}
+              </div>
+            ) : (
+              <div className="media-zone media-zone-dark aspect-video rounded-2xl">
+                <ImageIcon size={32} className="text-white/20" />
+                <span className="font-heading text-xs text-white/25 tracking-wide">Hero Media</span>
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
-
-      {/* Feather fade at bottom */}
-      <div className="hero-feather" />
 
       {/* Scroll indicator */}
       <motion.div

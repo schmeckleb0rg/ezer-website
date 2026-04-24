@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   ArrowLeft,
   Radio,
@@ -55,9 +55,25 @@ const capabilities = [
   },
 ];
 
+interface PageImage {
+  image_key: string;
+  image_url: string | null;
+}
+
 export default function EzerGuardMilitaryPage() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [deviceMedia, setDeviceMedia] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/page-images?page=ezerguard-military")
+      .then((r) => r.json())
+      .then((data) => {
+        const img = (data.images || []).find((i: PageImage) => i.image_key === "military_device_media");
+        if (img?.image_url) setDeviceMedia(img.image_url);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -183,14 +199,22 @@ export default function EzerGuardMilitaryPage() {
               </p>
             </motion.div>
 
-            {/* Device image placeholder */}
+            {/* Device image */}
             <div className="mt-8">
-              <div className="media-zone aspect-[16/9]">
-                <ImageIcon size={40} className="text-brand-secondary/25" />
-                <span className="font-heading text-sm text-brand-dark/30">
-                  Image of device
-                </span>
-              </div>
+              {deviceMedia ? (
+                <div className="rounded-2xl overflow-hidden aspect-video">
+                  {["mp4", "webm", "mov"].includes(deviceMedia.split(".").pop()?.toLowerCase() || "") ? (
+                    <video src={deviceMedia} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={deviceMedia} alt="EzerGuard-Military device" className="w-full h-full object-cover" />
+                  )}
+                </div>
+              ) : (
+                <div className="media-zone aspect-video rounded-2xl">
+                  <ImageIcon size={28} className="text-brand-secondary/25" />
+                  <span className="font-heading text-xs text-brand-dark/25 tracking-wide">Device Image</span>
+                </div>
+              )}
             </div>
           </div>
         </section>

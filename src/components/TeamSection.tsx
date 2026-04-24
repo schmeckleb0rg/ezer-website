@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { Image as ImageIcon, GraduationCap, Briefcase } from "lucide-react";
+import { Image as ImageIcon, GraduationCap } from "lucide-react";
 
 interface TeamMember {
   id: string;
@@ -26,46 +26,17 @@ interface ParsedMember {
 }
 
 function parseCredentials(member: TeamMember): ParsedMember {
-  const name = member.name;
   const bio = member.bio || "";
-
-  if (name.includes("Kaplan")) {
-    return {
-      raw: member,
-      specialty: "Radiation Oncologist, Harvard Medical School",
-      credentials: [
-        { degree: "MD", institution: "Stanford University Medical School" },
-        { degree: "BS", institution: "University of Rochester" },
-      ],
-    };
-  }
-
-  if (name.includes("Zaretsky")) {
-    return {
-      raw: member,
-      credentials: [
-        { degree: "JD", institution: "Brooklyn Law School", year: "1994" },
-        { degree: "MSEE", institution: "Polytechnic University of New York", year: "1987" },
-        { degree: "BEE", institution: "SUNY at Stony Brook", year: "1983" },
-      ],
-    };
-  }
-
-  if (name.includes("Holpuka")) {
-    return {
-      raw: member,
-      credentials: [
-        { degree: "PhD, Physics", institution: "Brown University" },
-        { degree: "MA, Mathematics", institution: "Boston University" },
-        { degree: "BS", institution: "Clark University" },
-      ],
-    };
-  }
-
   const lines = bio.split("\n").filter(Boolean);
   return {
     raw: member,
-    credentials: lines.map((line) => ({ degree: "", institution: line })),
+    credentials: lines.map((line) => {
+      const parts = line.split(" — ");
+      if (parts.length >= 2) {
+        return { degree: parts[0].trim(), institution: parts.slice(1).join(" — ").trim() };
+      }
+      return { degree: "", institution: line };
+    }),
   };
 }
 
@@ -74,7 +45,7 @@ const fallbackMembers: TeamMember[] = [
     id: "1",
     name: "Irving Kaplan, MD",
     title: "CEO",
-    bio: "Radiation Oncologist - Harvard Medical School\nEducation: undergrad- University of Rochester\nMD- Stanford University Medical School",
+    bio: "Radiation Oncologist — Harvard Medical School\nMD — Stanford University Medical School\nBS — University of Rochester",
     photo_url: null,
     sort_order: 1,
   },
@@ -82,7 +53,7 @@ const fallbackMembers: TeamMember[] = [
     id: "2",
     name: "Howie Zaretsky, BEE, MSEE, JD",
     title: "CTO, CIPO",
-    bio: "Brooklyn Law School (JD, 1994)\nPolytechnic University of New York (MSEE, 1987)\nState University of New York (SUNY) at Stony Brook (BEE, 1983)",
+    bio: "JD — Brooklyn Law School (1994)\nMSEE — Polytechnic University of New York (1987)\nBEE — SUNY at Stony Brook (1983)",
     photo_url: null,
     sort_order: 2,
   },
@@ -90,7 +61,7 @@ const fallbackMembers: TeamMember[] = [
     id: "3",
     name: "Ed Holpuka, PhD",
     title: "CSO",
-    bio: "PhD Physics (Brown)\nMA in Mathematics (Boston University) Undergrad (Clark University)",
+    bio: "PhD, Physics — Brown University\nMA, Mathematics — Boston University\nBS — Clark University",
     photo_url: null,
     sort_order: 3,
   },
@@ -191,16 +162,6 @@ export default function TeamSection() {
               <p className="mt-1 font-heading text-sm font-medium text-brand-secondary">
                 {member.raw.title}
               </p>
-
-              {/* Specialty if present */}
-              {member.specialty && (
-                <div className="mt-3 flex items-start gap-2">
-                  <Briefcase size={13} className="text-brand-dark/30 mt-0.5 shrink-0" />
-                  <span className="font-body text-xs text-brand-dark/70 leading-snug">
-                    {member.specialty}
-                  </span>
-                </div>
-              )}
 
               {/* Credentials */}
               {member.credentials.length > 0 && (

@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Heart, Zap, Radio, CheckCircle } from "lucide-react";
+import { Heart, Zap, Radio, CheckCircle, Image as ImageIcon } from "lucide-react";
 
 const features = [
   {
@@ -28,7 +28,19 @@ const features = [
   },
 ];
 
-export default function MissionSection() {
+function renderMedia(src: string) {
+  const ext = src.split(".").pop()?.split("?")[0]?.toLowerCase() || "";
+  if (["mp4", "webm", "mov", "avi"].includes(ext)) {
+    return <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />;
+  }
+  return <img src={src} alt="Mission media" className="w-full h-full object-cover" />;
+}
+
+interface MissionSectionProps {
+  mediaSrc?: string | null;
+}
+
+export default function MissionSection({ mediaSrc }: MissionSectionProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -81,6 +93,25 @@ export default function MissionSection() {
             </p>
           </motion.div>
         </div>
+
+        {/* Mission media */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.28 }}
+          className="mt-10 max-w-3xl"
+        >
+          {mediaSrc ? (
+            <div className="rounded-2xl overflow-hidden aspect-video">
+              {renderMedia(mediaSrc)}
+            </div>
+          ) : (
+            <div className="media-zone aspect-video rounded-2xl">
+              <ImageIcon size={28} className="text-brand-secondary/25" />
+              <span className="font-heading text-xs text-brand-dark/25 tracking-wide">Mission Media</span>
+            </div>
+          )}
+        </motion.div>
 
         {/* Key Features — glass card with bullet points */}
         <motion.div

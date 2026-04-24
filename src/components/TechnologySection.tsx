@@ -2,7 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Activity, Cpu, Smartphone, ShieldCheck } from "lucide-react";
+import { Activity, Cpu, Smartphone, ShieldCheck, Image as ImageIcon } from "lucide-react";
 
 const techSteps = [
   {
@@ -35,7 +35,19 @@ const techSteps = [
   },
 ];
 
-export default function TechnologySection() {
+function renderMedia(src: string) {
+  const ext = src.split(".").pop()?.split("?")[0]?.toLowerCase() || "";
+  if (["mp4", "webm", "mov", "avi"].includes(ext)) {
+    return <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />;
+  }
+  return <img src={src} alt="Technology media" className="w-full h-full object-cover" />;
+}
+
+interface TechnologySectionProps {
+  mediaSrc?: string | null;
+}
+
+export default function TechnologySection({ mediaSrc }: TechnologySectionProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -90,6 +102,25 @@ export default function TechnologySection() {
             wearable devices.
           </motion.p>
         </div>
+
+        {/* Technology media */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.22 }}
+          className="mt-10"
+        >
+          {mediaSrc ? (
+            <div className="rounded-2xl overflow-hidden aspect-video">
+              {renderMedia(mediaSrc)}
+            </div>
+          ) : (
+            <div className="media-zone media-zone-dark aspect-video rounded-2xl">
+              <ImageIcon size={28} className="text-white/20" />
+              <span className="font-heading text-xs text-white/25 tracking-wide">Technology Media</span>
+            </div>
+          )}
+        </motion.div>
 
         {/* Steps — glass cards in a 2-col grid */}
         <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">

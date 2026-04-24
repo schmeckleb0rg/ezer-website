@@ -81,6 +81,15 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Feather fade extending below nav into page content */}
+      <div
+        className="absolute top-full left-0 right-0 pointer-events-none"
+        style={{
+          height: '80px',
+          background: 'linear-gradient(to bottom, rgba(30,76,73,0.45) 0%, rgba(30,76,73,0.15) 45%, transparent 100%)',
+        }}
+      />
     </nav>
   );
 }

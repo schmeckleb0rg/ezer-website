@@ -2,9 +2,21 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight, Image as ImageIcon } from "lucide-react";
 
-export default function InvestorCTA() {
+function renderMedia(src: string) {
+  const ext = src.split(".").pop()?.split("?")[0]?.toLowerCase() || "";
+  if (["mp4", "webm", "mov", "avi"].includes(ext)) {
+    return <video src={src} autoPlay muted loop playsInline className="w-full h-full object-cover" />;
+  }
+  return <img src={src} alt="Investor media" className="w-full h-full object-cover" />;
+}
+
+interface InvestorCTAProps {
+  mediaSrc?: string | null;
+}
+
+export default function InvestorCTA({ mediaSrc }: InvestorCTAProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -72,6 +84,25 @@ export default function InvestorCTA() {
               Review Technology
               <ArrowRight size={18} />
             </a>
+          </motion.div>
+
+          {/* Investor media */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-10 max-w-xl"
+          >
+            {mediaSrc ? (
+              <div className="rounded-2xl overflow-hidden aspect-video">
+                {renderMedia(mediaSrc)}
+              </div>
+            ) : (
+              <div className="media-zone media-zone-dark aspect-video rounded-2xl">
+                <ImageIcon size={28} className="text-white/20" />
+                <span className="font-heading text-xs text-white/25 tracking-wide">Investor Media</span>
+              </div>
+            )}
           </motion.div>
 
           {/* Trust badges — glass pills */}
