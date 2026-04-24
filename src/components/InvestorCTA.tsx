@@ -86,24 +86,17 @@ export default function InvestorCTA({ mediaSrc }: InvestorCTAProps) {
             </a>
           </motion.div>
 
-          {/* Investor media */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-10 max-w-xl"
-          >
-            {mediaSrc ? (
-              <div className="rounded-2xl overflow-hidden aspect-video">
-                {renderMedia(mediaSrc)}
-              </div>
-            ) : (
-              <div className="media-zone media-zone-dark aspect-video rounded-2xl">
-                <ImageIcon size={28} className="text-white/20" />
-                <span className="font-heading text-xs text-white/25 tracking-wide">Investor Media</span>
-              </div>
-            )}
-          </motion.div>
+          {/* Investor media — shown only when uploaded */}
+          {mediaSrc && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-10 rounded-2xl overflow-hidden aspect-video max-w-xl"
+            >
+              {renderMedia(mediaSrc)}
+            </motion.div>
+          )}
 
           {/* Trust badges — glass pills */}
           <motion.div

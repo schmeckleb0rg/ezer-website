@@ -142,7 +142,6 @@ export default function EzerGuardODPage() {
               </p>
             </motion.div>
           </div>
-          <div className="hero-feather" />
         </section>
 
         {/* The Crisis - Stats */}
@@ -294,23 +293,16 @@ export default function EzerGuardODPage() {
                           </p>
                         )}
 
-                        {/* Step media — always visible */}
-                        <div className="mt-4">
-                          {hasImage ? (
-                            <div className="rounded-xl overflow-hidden aspect-[16/9]">
-                              <img
-                                src={hasImage}
-                                alt={step.title}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="media-zone media-zone-dark aspect-[16/9] rounded-xl">
-                              <ImageIcon size={20} className="text-white/20" />
-                              <span className="font-heading text-[10px] text-white/25 tracking-wide">Step {i + 1} Media</span>
-                            </div>
-                          )}
-                        </div>
+                        {/* Step media — shown only when uploaded */}
+                        {hasImage && (
+                          <div className="mt-4 rounded-xl overflow-hidden aspect-[16/9]">
+                            <img
+                              src={hasImage}
+                              alt={step.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   );

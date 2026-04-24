@@ -23,7 +23,7 @@ export default function Navbar() {
             <img
               src="/logo.svg"
               alt="Ezer Enterprises"
-              className="h-16 w-auto object-contain object-center"
+              className="h-24 w-auto object-contain object-center"
             />
           </Link>
 

@@ -124,24 +124,17 @@ export default function HeroSection({ mediaSrc }: HeroSectionProps) {
             ))}
           </motion.div>
 
-          {/* Media showcase */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="mt-12 max-w-4xl mx-auto"
-          >
-            {mediaSrc ? (
-              <div className="rounded-2xl overflow-hidden glass-card-dark aspect-video">
-                {renderMedia(mediaSrc)}
-              </div>
-            ) : (
-              <div className="media-zone media-zone-dark aspect-video rounded-2xl">
-                <ImageIcon size={32} className="text-white/20" />
-                <span className="font-heading text-xs text-white/25 tracking-wide">Hero Media</span>
-              </div>
-            )}
-          </motion.div>
+          {/* Media showcase — shown only when uploaded */}
+          {mediaSrc && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-12 rounded-2xl overflow-hidden glass-card-dark aspect-video max-w-4xl mx-auto"
+            >
+              {renderMedia(mediaSrc)}
+            </motion.div>
+          )}
         </div>
       </div>
 

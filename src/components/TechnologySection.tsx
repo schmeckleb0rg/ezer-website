@@ -103,24 +103,17 @@ export default function TechnologySection({ mediaSrc }: TechnologySectionProps) 
           </motion.p>
         </div>
 
-        {/* Technology media */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.22 }}
-          className="mt-10"
-        >
-          {mediaSrc ? (
-            <div className="rounded-2xl overflow-hidden aspect-video">
-              {renderMedia(mediaSrc)}
-            </div>
-          ) : (
-            <div className="media-zone media-zone-dark aspect-video rounded-2xl">
-              <ImageIcon size={28} className="text-white/20" />
-              <span className="font-heading text-xs text-white/25 tracking-wide">Technology Media</span>
-            </div>
-          )}
-        </motion.div>
+        {/* Technology media — shown only when uploaded */}
+        {mediaSrc && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.22 }}
+            className="mt-10 rounded-2xl overflow-hidden aspect-video"
+          >
+            {renderMedia(mediaSrc)}
+          </motion.div>
+        )}
 
         {/* Steps — glass cards in a 2-col grid */}
         <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">

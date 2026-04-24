@@ -199,23 +199,16 @@ export default function EzerGuardMilitaryPage() {
               </p>
             </motion.div>
 
-            {/* Device image */}
-            <div className="mt-8">
-              {deviceMedia ? (
-                <div className="rounded-2xl overflow-hidden aspect-video">
-                  {["mp4", "webm", "mov"].includes(deviceMedia.split(".").pop()?.toLowerCase() || "") ? (
-                    <video src={deviceMedia} autoPlay muted loop playsInline className="w-full h-full object-cover" />
-                  ) : (
-                    <img src={deviceMedia} alt="EzerGuard-Military device" className="w-full h-full object-cover" />
-                  )}
-                </div>
-              ) : (
-                <div className="media-zone aspect-video rounded-2xl">
-                  <ImageIcon size={28} className="text-brand-secondary/25" />
-                  <span className="font-heading text-xs text-brand-dark/25 tracking-wide">Device Image</span>
-                </div>
-              )}
-            </div>
+            {/* Device image — shown only when uploaded */}
+            {deviceMedia && (
+              <div className="mt-8 rounded-2xl overflow-hidden aspect-video">
+                {["mp4", "webm", "mov"].includes(deviceMedia.split(".").pop()?.toLowerCase() || "") ? (
+                  <video src={deviceMedia} autoPlay muted loop playsInline className="w-full h-full object-cover" />
+                ) : (
+                  <img src={deviceMedia} alt="EzerGuard-Military device" className="w-full h-full object-cover" />
+                )}
+              </div>
+            )}
           </div>
         </section>
 

@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand */}
           <div className="md:col-span-5">
-            <img src="/logo.svg" alt="Ezer Enterprises" className="h-12 w-auto object-contain object-center mb-6" />
+            <img src="/logo.svg" alt="Ezer Enterprises" className="h-[72px] w-auto object-contain object-center mb-6" />
             <p className="font-body text-sm leading-relaxed max-w-sm text-white/40">
               To create wearable systems that deliver life saving medications in
               life threatening situations.

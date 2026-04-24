@@ -94,24 +94,17 @@ export default function MissionSection({ mediaSrc }: MissionSectionProps) {
           </motion.div>
         </div>
 
-        {/* Mission media */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.28 }}
-          className="mt-10 max-w-3xl"
-        >
-          {mediaSrc ? (
-            <div className="rounded-2xl overflow-hidden aspect-video">
-              {renderMedia(mediaSrc)}
-            </div>
-          ) : (
-            <div className="media-zone aspect-video rounded-2xl">
-              <ImageIcon size={28} className="text-brand-secondary/25" />
-              <span className="font-heading text-xs text-brand-dark/25 tracking-wide">Mission Media</span>
-            </div>
-          )}
-        </motion.div>
+        {/* Mission media — shown only when uploaded */}
+        {mediaSrc && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.28 }}
+            className="mt-10 rounded-2xl overflow-hidden aspect-video max-w-3xl"
+          >
+            {renderMedia(mediaSrc)}
+          </motion.div>
+        )}
 
         {/* Key Features — glass card with bullet points */}
         <motion.div
