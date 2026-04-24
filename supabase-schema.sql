@@ -151,3 +151,17 @@ alter table page_images enable row level security;
 create policy "Public can read page images"
   on page_images for select
   using (true);
+
+-- ============================================================
+-- SERVICE ROLE GRANTS (required for server-side admin access)
+-- ============================================================
+alter table admin_users disable row level security;
+alter table audit_log disable row level security;
+
+grant all on admin_users to service_role;
+grant all on admin_users to postgres;
+grant all on site_content to service_role;
+grant all on team_members to service_role;
+grant all on page_images to service_role;
+grant all on audit_log to service_role;
+grant all on investor_inquiries to service_role;
