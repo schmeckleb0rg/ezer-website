@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
+
+function getServiceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+  );
+}
 
 function getAdminUser(request: NextRequest) {
   const token = request.cookies.get("admin_token")?.value;
@@ -11,6 +18,7 @@ function getAdminUser(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get("page") || "home";
+  const supabase = getServiceClient();
 
   const { data, error } = await supabase
     .from("site_content")
@@ -32,15 +40,12 @@ export async function PUT(request: NextRequest) {
   }
 
   const { id, value } = await request.json();
-
   if (!id || value === undefined) {
-    return NextResponse.json(
-      { error: "id and value are required" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "id and value are required" }, { status: 400 });
   }
 
-  // Get old value for audit log
+  const supabase = getServiceClient();
+
   const { data: oldRecord } = await supabase
     .from("site_content")
     .select("value")
@@ -58,7 +63,6 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Audit log
   await supabase.from("audit_log").insert({
     admin_id: user.id,
     action: "update_content",
