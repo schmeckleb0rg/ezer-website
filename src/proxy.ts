@@ -86,7 +86,7 @@ export function proxy(request: NextRequest) {
   // Prevent cross-origin information leaks
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
-  response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+  response.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
 
   return response;
 }
