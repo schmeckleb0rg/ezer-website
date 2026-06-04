@@ -14,6 +14,7 @@ import {
   X,
   Box,
   Settings,
+  ChevronRight,
 } from "lucide-react";
 
 interface ContentItem {
@@ -61,13 +62,56 @@ const pages = [
   { key: "ezerguard-cd", label: "EzerGuard-CD" },
 ];
 
+// Home page sub-sections with their content key prefixes and media zones
+const homeSections = [
+  {
+    key: "hero",
+    label: "Hero",
+    contentPrefixes: ["hero_"],
+    mediaZones: [
+      { key: "home_hero_media", label: "Hero Section Media", hint: "Background image, video, or GIF for the hero section" },
+    ],
+  },
+  {
+    key: "mission",
+    label: "Mission",
+    contentPrefixes: ["mission_"],
+    mediaZones: [
+      { key: "home_mission_media", label: "Mission Section Media", hint: "Visual for the mission section" },
+    ],
+  },
+  {
+    key: "technology",
+    label: "Technology",
+    contentPrefixes: ["tech_", "technology_"],
+    mediaZones: [
+      { key: "home_technology_media", label: "Technology Section Media", hint: "Device showcase for How It Works" },
+    ],
+  },
+  {
+    key: "products",
+    label: "Products",
+    contentPrefixes: ["product_", "products_"],
+    mediaZones: [],
+  },
+  {
+    key: "team",
+    label: "Team",
+    contentPrefixes: ["home_team_"],
+    mediaZones: [],
+    isTeamRedirect: true,
+  },
+  {
+    key: "partner",
+    label: "Partner with Us",
+    contentPrefixes: ["investor_"],
+    mediaZones: [
+      { key: "home_investor_media", label: "Investor CTA Media", hint: "Visual for the investment section" },
+    ],
+  },
+];
+
 const mediaZones: Record<string, MediaZone[]> = {
-  home: [
-    { key: "home_hero_media", label: "Hero Section Media", hint: "Background image, video, or GIF for the hero section" },
-    { key: "home_mission_media", label: "Mission Section Media", hint: "Visual for the mission section" },
-    { key: "home_technology_media", label: "Technology Section Media", hint: "Device showcase for How It Works" },
-    { key: "home_investor_media", label: "Investor CTA Media", hint: "Visual for the investment section" },
-  ],
   "ezerguard-od": [
     { key: "od_hero_media", label: "Product Hero Media", hint: "Hero image or video for EzerGuard-OD page" },
     { key: "od_step_0", label: "Step 1 — Device Activation" },
@@ -79,7 +123,7 @@ const mediaZones: Record<string, MediaZone[]> = {
   ],
   "ezerguard-military": [
     { key: "military_hero_media", label: "Product Hero Media", hint: "Hero image or video for EzerGuard-Military page" },
-    { key: "military_device_media", label: "Device Image", hint: "Photo of the EzerGuard-Military device (shown in threat context section)" },
+    { key: "military_device_media", label: "Device Image", hint: "Photo of the EzerGuard-Military device" },
     { key: "military_cap_0", label: "Capability 1 — Detection & Classification" },
     { key: "military_cap_1", label: "Capability 2 — Verification of Exposure" },
     { key: "military_cap_2", label: "Capability 3 — Delivery of Antidote" },
@@ -89,7 +133,7 @@ const mediaZones: Record<string, MediaZone[]> = {
   ],
   "ezerguard-cd": [
     { key: "cd_hero_media", label: "Product Hero Media", hint: "Hero image or video for EzerGuard-CD page" },
-    { key: "cd_device_media", label: "Device Image", hint: "Photo of the EzerGuard-CD device (shown in civilian protection section)" },
+    { key: "cd_device_media", label: "Device Image", hint: "Photo of the EzerGuard-CD device" },
     { key: "cd_cap_0", label: "Step 1 — Civil Defense Alert" },
     { key: "cd_cap_1", label: "Step 2 — Device Configuration" },
     { key: "cd_cap_2", label: "Step 3 — Auditory/Vibratory Monitoring" },
@@ -268,7 +312,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-brand-dark text-white">
+      {/* Header */}
+      <header className="bg-brand-dark text-white sticky top-0 z-10 shadow-sm">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img src="/ezerdot.svg" alt="Ezer" className="h-8 w-auto" />
@@ -290,65 +335,74 @@ export default function AdminDashboard() {
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="flex gap-8">
           {/* Sidebar */}
-          <nav className="w-56 shrink-0">
-            <h2 className="font-heading text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-              Pages
-            </h2>
-            <ul className="space-y-1">
-              {pages.map((page) => (
-                <li key={page.key}>
+          <nav className="w-56 shrink-0 space-y-6">
+            {/* Sections */}
+            <div>
+              <h2 className="font-heading text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
+                Sections
+              </h2>
+              <ul className="space-y-0.5">
+                <li>
                   <button
-                    onClick={() => setActiveView(page.key)}
-                    className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
-                      activeView === page.key
+                    onClick={() => setActiveView("team")}
+                    className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
+                      activeView === "team"
                         ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
                         : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    <FileText size={16} />
-                    {page.label}
+                    <Users size={15} />
+                    Team Members
                   </button>
                 </li>
-              ))}
-            </ul>
+              </ul>
+            </div>
 
-            <h2 className="font-heading text-xs font-semibold text-gray-400 uppercase tracking-wider mt-8 mb-3">
-              Sections
-            </h2>
-            <ul className="space-y-1">
-              <li>
-                <button
-                  onClick={() => setActiveView("team")}
-                  className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
-                    activeView === "team"
-                      ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <Users size={16} />
-                  Team Members
-                </button>
-              </li>
-            </ul>
+            {/* Settings */}
+            <div>
+              <h2 className="font-heading text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
+                Settings
+              </h2>
+              <ul className="space-y-0.5">
+                <li>
+                  <button
+                    onClick={() => setActiveView("settings")}
+                    className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
+                      activeView === "settings"
+                        ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Settings size={15} />
+                    Site Settings
+                  </button>
+                </li>
+              </ul>
+            </div>
 
-            <h2 className="font-heading text-xs font-semibold text-gray-400 uppercase tracking-wider mt-8 mb-3">
-              Settings
-            </h2>
-            <ul className="space-y-1">
-              <li>
-                <button
-                  onClick={() => setActiveView("settings")}
-                  className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
-                    activeView === "settings"
-                      ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <Settings size={16} />
-                  Site Settings
-                </button>
-              </li>
-            </ul>
+            {/* Pages */}
+            <div>
+              <h2 className="font-heading text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
+                Pages
+              </h2>
+              <ul className="space-y-0.5">
+                {pages.map((page) => (
+                  <li key={page.key}>
+                    <button
+                      onClick={() => setActiveView(page.key)}
+                      className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
+                        activeView === page.key
+                          ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      <FileText size={15} />
+                      {page.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
 
           {/* Main */}
@@ -366,6 +420,18 @@ export default function AdminDashboard() {
               />
             ) : activeView === "settings" ? (
               <SiteSettingsEditor />
+            ) : activeView === "home" ? (
+              <HomePageEditor
+                content={content}
+                pageImages={pageImages}
+                saving={saving}
+                saved={saved}
+                uploading={uploading}
+                updateContent={updateContent}
+                uploadMedia={uploadMedia}
+                deleteMedia={deleteMedia}
+                onNavigateTeam={() => setActiveView("team")}
+              />
             ) : (
               <PageEditor
                 pageKey={activeView}
@@ -388,7 +454,142 @@ export default function AdminDashboard() {
   );
 }
 
-// ─── Page Editor ─────────────────────────────────────────────────────────────
+// ─── Home Page Editor (with sub-section tabs) ─────────────────────────────────
+
+function HomePageEditor({
+  content,
+  pageImages,
+  saving,
+  saved,
+  uploading,
+  updateContent,
+  uploadMedia,
+  deleteMedia,
+  onNavigateTeam,
+}: {
+  content: ContentItem[];
+  pageImages: PageImage[];
+  saving: string | null;
+  saved: string | null;
+  uploading: string | null;
+  updateContent: (id: string, value: string) => void;
+  uploadMedia: (key: string, file: File) => void;
+  deleteMedia: (key: string) => void;
+  onNavigateTeam: () => void;
+}) {
+  const [activeSection, setActiveSection] = useState("hero");
+  const getImageUrl = (key: string) =>
+    pageImages.find((p) => p.image_key === key)?.image_url || null;
+
+  const currentSection = homeSections.find((s) => s.key === activeSection)!;
+  const sectionContent = content.filter((item) =>
+    currentSection.contentPrefixes.some((prefix) => item.section_key.startsWith(prefix))
+  );
+
+  return (
+    <div>
+      {/* Page header */}
+      <div className="mb-6">
+        <h2 className="font-display text-2xl font-bold text-brand-dark">Home Page</h2>
+        <p className="mt-1 text-sm text-gray-400">Edit content by section using the tabs below.</p>
+      </div>
+
+      {/* Section tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-8 overflow-x-auto">
+        {homeSections.map((section) => (
+          <button
+            key={section.key}
+            onClick={() => setActiveSection(section.key)}
+            className={`shrink-0 px-4 py-2 rounded-lg text-sm font-heading font-medium transition-colors whitespace-nowrap ${
+              activeSection === section.key
+                ? "bg-white text-brand-dark shadow-sm font-semibold"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Team redirect tab */}
+      {currentSection.isTeamRedirect ? (
+        <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
+          <Users size={36} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="font-heading font-semibold text-gray-600 text-base">Team Members</h3>
+          <p className="mt-2 text-sm text-gray-400 max-w-sm mx-auto">
+            Team member profiles are managed in the Sections area.
+          </p>
+          <button
+            onClick={onNavigateTeam}
+            className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-secondary px-5 py-2.5 text-sm font-heading font-semibold text-white hover:bg-brand-primary transition-colors"
+          >
+            <Users size={15} />
+            Go to Team Members
+            <ChevronRight size={14} />
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {/* Text content — first */}
+          {sectionContent.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2.5 mb-4">
+                <FileText size={16} className="text-brand-secondary" />
+                <h3 className="font-display text-lg font-bold text-brand-dark">Text Content</h3>
+              </div>
+              <div className="space-y-4">
+                {sectionContent.map((item) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    saving={saving}
+                    saved={saved}
+                    updateContent={updateContent}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Media zones — after text */}
+          {currentSection.mediaZones.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2.5 mb-4">
+                <Upload size={16} className="text-brand-secondary" />
+                <h3 className="font-display text-lg font-bold text-brand-dark">Media</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {currentSection.mediaZones.map((zone) => (
+                  <MediaZoneCard
+                    key={zone.key}
+                    zone={zone}
+                    imageUrl={getImageUrl(zone.key)}
+                    uploading={uploading === zone.key}
+                    onUpload={(file) => uploadMedia(zone.key, file)}
+                    onDelete={() => deleteMedia(zone.key)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {sectionContent.length === 0 && currentSection.mediaZones.length === 0 && (
+            <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
+              <FileText size={36} className="mx-auto text-gray-300 mb-4" />
+              <h3 className="font-heading font-semibold text-gray-500">No content yet</h3>
+              <p className="mt-2 text-sm text-gray-400 max-w-sm mx-auto">
+                Add rows to the <span className="font-mono bg-gray-100 px-1 rounded">site_content</span> table in Supabase for this section.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Page Editor (non-home pages) ────────────────────────────────────────────
 
 function PageEditor({
   pageLabel,
@@ -419,17 +620,46 @@ function PageEditor({
 
   return (
     <div className="space-y-10">
-      {/* Page title */}
       <div>
         <h2 className="font-display text-2xl font-bold text-brand-dark">{pageLabel}</h2>
-        <p className="mt-1 text-sm text-gray-400">Upload media and edit text content for this page.</p>
+        <p className="mt-1 text-sm text-gray-400">Edit text content and upload media for this page.</p>
       </div>
 
-      {/* Media Zones — shown first */}
+      {/* Text Content — first */}
+      <div>
+        <div className="flex items-center gap-2.5 mb-4">
+          <FileText size={16} className="text-brand-secondary" />
+          <h3 className="font-display text-xl font-bold text-brand-dark">Text Content</h3>
+        </div>
+
+        {content.length === 0 ? (
+          <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
+            <FileText size={36} className="mx-auto text-gray-300 mb-4" />
+            <h3 className="font-heading font-semibold text-gray-500">No text content entries yet</h3>
+            <p className="mt-2 text-sm text-gray-400 max-w-sm mx-auto">
+              Run the seed SQL in Supabase to populate editable text fields for this page.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {content.map((item) => (
+              <ContentCard
+                key={item.id}
+                item={item}
+                saving={saving}
+                saved={saved}
+                updateContent={updateContent}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Media Zones — after text */}
       {zones.length > 0 && (
         <div>
-          <div className="flex items-center gap-3 mb-4">
-            <Upload size={18} className="text-brand-secondary" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <Upload size={16} className="text-brand-secondary" />
             <h3 className="font-display text-xl font-bold text-brand-dark">Media Uploads</h3>
           </div>
           <p className="text-sm text-gray-400 mb-6">
@@ -449,74 +679,68 @@ function PageEditor({
           </div>
         </div>
       )}
+    </div>
+  );
+}
 
-      {/* Text Content — shown below media */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <FileText size={18} className="text-brand-secondary" />
-          <h3 className="font-display text-xl font-bold text-brand-dark">Text Content</h3>
+// ─── Content Card (shared text field) ────────────────────────────────────────
+
+function ContentCard({
+  item,
+  saving,
+  saved,
+  updateContent,
+}: {
+  item: ContentItem;
+  saving: string | null;
+  saved: string | null;
+  updateContent: (id: string, value: string) => void;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-5">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <label className="font-heading font-semibold text-sm text-brand-dark">
+            {item.label || item.section_key}
+          </label>
+          <span className="ml-2 text-[11px] text-gray-400 font-mono">{item.section_key}</span>
         </div>
-
-        {content.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center">
-            <FileText size={36} className="mx-auto text-gray-300 mb-4" />
-            <h3 className="font-heading font-semibold text-gray-500">No text content entries yet</h3>
-            <p className="mt-2 text-sm text-gray-400 max-w-sm mx-auto">
-              Run the seed SQL in Supabase to populate editable text fields for this page.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {content.map((item) => (
-              <div key={item.id} className="rounded-xl border border-gray-200 bg-white p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <label className="font-heading font-semibold text-sm text-brand-dark">
-                      {item.label || item.section_key}
-                    </label>
-                    <span className="ml-2 text-xs text-gray-400 font-mono">{item.section_key}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {saved === item.id && (
-                      <span className="flex items-center gap-1 text-xs text-green-600">
-                        <CheckCircle size={14} /> Saved
-                      </span>
-                    )}
-                    <button
-                      onClick={() =>
-                        updateContent(
-                          item.id,
-                          (document.getElementById(`input-${item.id}`) as HTMLTextAreaElement | HTMLInputElement)?.value || item.value
-                        )
-                      }
-                      disabled={saving === item.id}
-                      className="flex items-center gap-1 rounded-lg bg-brand-secondary px-3 py-1.5 text-xs font-heading font-semibold text-white hover:bg-brand-primary transition-colors disabled:opacity-50"
-                    >
-                      <Save size={12} />
-                      {saving === item.id ? "Saving..." : "Save"}
-                    </button>
-                  </div>
-                </div>
-                {item.content_type === "rich_text" ? (
-                  <textarea
-                    id={`input-${item.id}`}
-                    defaultValue={item.value}
-                    rows={4}
-                    className="w-full rounded-lg border border-gray-200 px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-secondary/30 resize-y"
-                  />
-                ) : (
-                  <input
-                    id={`input-${item.id}`}
-                    type="text"
-                    defaultValue={item.value}
-                    className="w-full rounded-lg border border-gray-200 px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-secondary/30"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          {saved === item.id && (
+            <span className="flex items-center gap-1 text-xs text-green-600">
+              <CheckCircle size={13} /> Saved
+            </span>
+          )}
+          <button
+            onClick={() =>
+              updateContent(
+                item.id,
+                (document.getElementById(`input-${item.id}`) as HTMLTextAreaElement | HTMLInputElement)?.value || item.value
+              )
+            }
+            disabled={saving === item.id}
+            className="flex items-center gap-1 rounded-lg bg-brand-secondary px-3 py-1.5 text-xs font-heading font-semibold text-white hover:bg-brand-primary transition-colors disabled:opacity-50"
+          >
+            <Save size={12} />
+            {saving === item.id ? "Saving..." : "Save"}
+          </button>
+        </div>
       </div>
+      {item.content_type === "rich_text" ? (
+        <textarea
+          id={`input-${item.id}`}
+          defaultValue={item.value}
+          rows={4}
+          className="w-full rounded-lg border border-gray-200 px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-secondary/30 resize-y"
+        />
+      ) : (
+        <input
+          id={`input-${item.id}`}
+          type="text"
+          defaultValue={item.value}
+          className="w-full rounded-lg border border-gray-200 px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-secondary/30"
+        />
+      )}
     </div>
   );
 }
@@ -841,7 +1065,7 @@ function TeamMemberCard({
           <div>
             <label className="block text-xs font-heading font-medium text-gray-500 mb-1">Bio / Education</label>
             <p className="text-[11px] text-gray-400 mb-1.5 leading-relaxed">
-              One entry per line. Use <span className="font-mono bg-gray-100 px-1 rounded">Degree — Institution</span> format (e.g. <span className="font-mono bg-gray-100 px-1 rounded">MD — Stanford University</span>).
+              One entry per line. Use <span className="font-mono bg-gray-100 px-1 rounded">Degree — Institution</span> format.
             </p>
             <textarea
               id={`team-bio-${member.id}`}
