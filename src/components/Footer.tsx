@@ -85,7 +85,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Ezer Enterprises. All rights reserved.
           </p>
           <p className="text-xs text-white/25">
-            Patented Technology &middot; Made in the USA
+            Patented Technology
           </p>
         </div>
       </div>
