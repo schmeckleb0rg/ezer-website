@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 
-// Extract just the hostname for CSP (e.g. "https://abc.supabase.co" → "https://abc.supabase.co")
-function buildCSP(nonce: string): string {
+// Note: nonce-based CSP is incompatible with Vercel prerender caching — the cached HTML
+// has a baked-in nonce that becomes stale on subsequent requests, blocking all inline scripts.
+// Using unsafe-inline instead, which works correctly with Vercel's caching layer.
+function buildCSP(): string {
   const isDev = process.env.NODE_ENV === "development";
 
   // Allow Supabase storage + API connections
@@ -11,10 +13,10 @@ function buildCSP(nonce: string): string {
 
   const directives = [
     `default-src 'self'`,
-    // Scripts: nonce-only (no unsafe-inline). Dev needs unsafe-eval for React HMR.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
-    // Styles: Next.js injects style tags, so nonce or unsafe-inline needed
-    `style-src 'self' 'nonce-${nonce}' 'unsafe-inline'`,
+    // Scripts: unsafe-inline required for Next.js inline scripts with Vercel prerender caching
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+    // Styles: unsafe-inline needed for Next.js injected style tags
+    `style-src 'self' 'unsafe-inline'`,
     // Images: self + blob (canvas/upload previews) + Supabase storage + data URIs
     `img-src 'self' blob: data: ${supabaseHost}`,
     // Fonts: self only (Google Fonts are self-hosted via next/font)
@@ -52,18 +54,10 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // ─── Generate nonce for CSP ───────────────────────────────────────────────
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const csp = buildCSP(nonce);
+  const csp = buildCSP();
 
   // ─── Build response with security headers ────────────────────────────────
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", csp);
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  const response = NextResponse.next();
 
   // Content Security Policy — primary defense against XSS
   response.headers.set("Content-Security-Policy", csp);
@@ -93,9 +87,6 @@ export function proxy(request: NextRequest) {
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
   response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
-
-  // Pass nonce to layout via header
-  response.headers.set("x-nonce", nonce);
 
   return response;
 }
