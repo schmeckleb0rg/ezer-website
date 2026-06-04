@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     resend.emails.send({
       from: "Ezer Enterprises <noreply@ezerenter.com>",
       to: "ikaplan@ezerenter.com",
-      replyTo: `${name} <${email}>`,
+      replyTo: [email],
       subject: `New Investor Inquiry from ${safeName}`,
       html: emailHtml,
     }),
