@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     .eq("ip_address", ip)
     .gte("created_at", oneHourAgo);
 
-  if ((count ?? 0) >= 3) {
+  if ((count ?? 0) >= 10) {
     return NextResponse.json(
       { error: "Too many submissions. Please try again later." },
       { status: 429 }
@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
     resend.emails.send({
       from: "Ezer Enterprises <noreply@ezerenter.com>",
       to: "ikaplan@ezerenter.com",
+      replyTo: email,
       subject: `New Investor Inquiry from ${safeName}`,
       html: emailHtml,
     }),
