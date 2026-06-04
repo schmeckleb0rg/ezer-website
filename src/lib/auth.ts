@@ -2,7 +2,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { createClient } from "@supabase/supabase-js";
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET || "fallback-secret-change-me";
+const JWT_SECRET: string = (() => {
+  const secret = process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET environment variable is not set.");
+  return secret;
+})();
 const TOKEN_EXPIRY = "8h";
 
 function getAdminClient() {
