@@ -71,35 +71,45 @@ export async function POST(request: NextRequest) {
   const safeCompany = company ? escapeHtml(company) : null;
   const safeMessage = escapeHtml(message);
 
+  const emailHtml = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #1e4c49;">New Investor Inquiry</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold; width: 120px;">Name</td>
+          <td style="padding: 8px 0;">${safeName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold;">Email</td>
+          <td style="padding: 8px 0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
+        </tr>
+        ${safeCompany ? `<tr><td style="padding: 8px 0; font-weight: bold;">Company</td><td style="padding: 8px 0;">${safeCompany}</td></tr>` : ""}
+        <tr>
+          <td style="padding: 8px 0; font-weight: bold; vertical-align: top;">Message</td>
+          <td style="padding: 8px 0; white-space: pre-wrap;">${safeMessage}</td>
+        </tr>
+      </table>
+      <p style="color: #888; font-size: 12px; margin-top: 24px;">
+        Submitted via ezerenter.com
+      </p>
+    </div>
+  `;
+
   const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
-    from: "Ezer Enterprises <noreply@ezerenter.com>",
-    to: "ikaplan@ezerenter.com",
-    subject: `New Investor Inquiry from ${safeName}`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1e4c49;">New Investor Inquiry</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td style="padding: 8px 0; font-weight: bold; width: 120px;">Name</td>
-            <td style="padding: 8px 0;">${safeName}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 0; font-weight: bold;">Email</td>
-            <td style="padding: 8px 0;"><a href="mailto:${safeEmail}">${safeEmail}</a></td>
-          </tr>
-          ${safeCompany ? `<tr><td style="padding: 8px 0; font-weight: bold;">Company</td><td style="padding: 8px 0;">${safeCompany}</td></tr>` : ""}
-          <tr>
-            <td style="padding: 8px 0; font-weight: bold; vertical-align: top;">Message</td>
-            <td style="padding: 8px 0; white-space: pre-wrap;">${safeMessage}</td>
-          </tr>
-        </table>
-        <p style="color: #888; font-size: 12px; margin-top: 24px;">
-          Submitted via ezerenter.com
-        </p>
-      </div>
-    `,
-  });
+  await Promise.all([
+    resend.emails.send({
+      from: "Ezer Enterprises <noreply@ezerenter.com>",
+      to: "ikaplan@ezerenter.com",
+      subject: `New Investor Inquiry from ${safeName}`,
+      html: emailHtml,
+    }),
+    resend.emails.send({
+      from: "Ezer Enterprises <noreply@ezerenter.com>",
+      to: "ikorer@ezerenter.com",
+      subject: `[Copy] New Investor Inquiry from ${safeName}`,
+      html: emailHtml,
+    }),
+  ]);
 
   return NextResponse.json({ success: true });
 }
