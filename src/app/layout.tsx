@@ -26,9 +26,9 @@ const generalSans = localFont({
   variable: "--font-general-sans",
 });
 
-// Force dynamic rendering so generateMetadata re-fetches on every request
-// (prevents Vercel from caching a stale favicon/og URL from build time)
-export const revalidate = 0;
+// Force this layout to never be statically cached — ensures generateMetadata
+// always re-fetches the latest favicon/og URLs from Supabase on every request.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   let faviconUrl: string | null = null;
@@ -39,15 +39,17 @@ export async function generateMetadata(): Promise<Metadata> {
       process.env.NEXT_PUBLIC_SUPABASE_URL || "",
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
     );
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("site_content")
       .select("section_key, value")
       .in("section_key", ["favicon_url", "og_image_url"]);
 
-    faviconUrl = data?.find((d) => d.section_key === "favicon_url")?.value || null;
-    ogImageUrl = data?.find((d) => d.section_key === "og_image_url")?.value || null;
+    if (!error && data) {
+      faviconUrl = data.find((d) => d.section_key === "favicon_url")?.value || null;
+      ogImageUrl = data.find((d) => d.section_key === "og_image_url")?.value || null;
+    }
   } catch {
-    // fall through with nulls — static fallbacks apply
+    // fall through with nulls
   }
 
   return {
