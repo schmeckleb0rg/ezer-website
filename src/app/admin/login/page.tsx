@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen gradient-hero flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/logo.svg" alt="Ezer Enterprises" className="h-16 w-auto mx-auto mb-4" />
+          <img src="/logo.svg" alt="Ezer Enterprises" className="h-32 w-auto mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold text-white">
             Admin Portal
           </h1>
