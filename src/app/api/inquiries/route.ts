@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     .eq("ip_address", ip)
     .gte("created_at", oneHourAgo);
 
-  if ((count ?? 0) >= 10) {
+  if ((count ?? 0) >= 3) {
     return NextResponse.json(
       { error: "Too many submissions. Please try again later." },
       { status: 429 }
