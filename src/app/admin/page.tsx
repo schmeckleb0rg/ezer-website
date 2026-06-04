@@ -6,7 +6,6 @@ import {
   Save,
   LogOut,
   FileText,
-  Shield,
   CheckCircle,
   Users,
   Plus,
@@ -14,6 +13,7 @@ import {
   Upload,
   X,
   Box,
+  Settings,
 } from "lucide-react";
 
 interface ContentItem {
@@ -117,6 +117,8 @@ export default function AdminDashboard() {
     if (!user) return;
     if (activeView === "team") {
       fetchTeamMembers();
+    } else if (activeView === "settings") {
+      // settings view manages its own data fetching
     } else {
       fetchContent(activeView);
       fetchPageImages(activeView);
@@ -269,7 +271,7 @@ export default function AdminDashboard() {
       <header className="bg-brand-dark text-white">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Shield size={20} className="text-brand-secondary" />
+            <img src="/ezerdot.svg" alt="Ezer" className="h-8 w-auto" />
             <div>
               <h1 className="font-heading font-semibold text-sm">Ezer Admin Portal</h1>
               <p className="text-xs text-white/50">{user?.email}</p>
@@ -328,6 +330,25 @@ export default function AdminDashboard() {
                 </button>
               </li>
             </ul>
+
+            <h2 className="font-heading text-xs font-semibold text-gray-400 uppercase tracking-wider mt-8 mb-3">
+              Settings
+            </h2>
+            <ul className="space-y-1">
+              <li>
+                <button
+                  onClick={() => setActiveView("settings")}
+                  className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-heading transition-colors ${
+                    activeView === "settings"
+                      ? "bg-brand-secondary/10 text-brand-secondary font-semibold"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  <Settings size={16} />
+                  Site Settings
+                </button>
+              </li>
+            </ul>
           </nav>
 
           {/* Main */}
@@ -343,6 +364,8 @@ export default function AdminDashboard() {
                 deleteTeamMember={deleteTeamMember}
                 uploadPhoto={uploadPhoto}
               />
+            ) : activeView === "settings" ? (
+              <SiteSettingsEditor />
             ) : (
               <PageEditor
                 pageKey={activeView}
@@ -830,5 +853,156 @@ function TeamMemberCard({
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Site Settings Editor ─────────────────────────────────────────────────────
+
+function SiteSettingsEditor() {
+  const [items, setItems] = useState<{ id: string; section_key: string; value: string }[]>([]);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [saved, setSaved] = useState<string | null>(null);
+  const faviconRef = useRef<HTMLInputElement>(null);
+  const ogRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/content?page=global")
+      .then((r) => r.json())
+      .then((d) => setItems(d.content || []));
+  }, []);
+
+  const getItem = (key: string) => items.find((i) => i.section_key === key);
+
+  async function handleUpload(sectionKey: string, file: File) {
+    setUploading(sectionKey);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "global");
+      const uploadRes = await fetch("/api/admin/upload", { method: "POST", body: formData });
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        alert(err.error || "Upload failed");
+        return;
+      }
+      const { url } = await uploadRes.json();
+      const item = getItem(sectionKey);
+      if (!item) return;
+      await fetch("/api/admin/content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item.id, value: url }),
+      });
+      setItems((prev) => prev.map((i) => i.section_key === sectionKey ? { ...i, value: url } : i));
+      setSaved(sectionKey);
+      setTimeout(() => setSaved(null), 2000);
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  const zones = [
+    {
+      key: "favicon_url",
+      label: "Favicon",
+      hint: "Square PNG or ICO, minimum 32×32px. Shown in browser tabs and bookmarks.",
+      ref: faviconRef,
+    },
+    {
+      key: "og_image_url",
+      label: "OG Image",
+      hint: "Recommended 1200×630px JPG or PNG. Shown when sharing links on social media.",
+      ref: ogRef,
+    },
+  ];
+
+  return (
+    <>
+      <div className="mb-6">
+        <h2 className="font-display text-2xl font-bold text-brand-dark">Site Settings</h2>
+        <p className="mt-1 text-sm text-gray-400">Manage global site assets like favicon and social sharing image.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {zones.map((zone) => {
+          const item = getItem(zone.key);
+          const currentUrl = item?.value || null;
+          const isUploading = uploading === zone.key;
+          const isSaved = saved === zone.key;
+
+          return (
+            <div key={zone.key} className="rounded-xl border border-gray-200 bg-white p-5">
+              <div className="flex items-start justify-between mb-3">
+                <div className="min-w-0 flex-1 pr-2">
+                  <h4 className="font-heading font-semibold text-sm text-brand-dark">{zone.label}</h4>
+                  <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">{zone.hint}</p>
+                </div>
+                {isSaved && (
+                  <span className="flex items-center gap-1 text-xs text-green-600 shrink-0">
+                    <CheckCircle size={12} /> Saved
+                  </span>
+                )}
+              </div>
+
+              <div
+                className="relative rounded-xl border-2 border-dashed border-gray-200 overflow-hidden cursor-pointer hover:border-brand-secondary/50 transition-colors"
+                style={{ aspectRatio: zone.key === "favicon_url" ? "1/1" : "16/9", maxHeight: zone.key === "favicon_url" ? "160px" : undefined }}
+                onClick={() => !currentUrl && !isUploading && zone.ref.current?.click()}
+              >
+                {currentUrl ? (
+                  <>
+                    <img src={currentUrl} alt={zone.label} className="w-full h-full object-contain p-2" />
+                    <div className="absolute inset-0 bg-black/55 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); zone.ref.current?.click(); }}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-lg text-xs font-heading font-semibold text-brand-dark hover:bg-gray-100 transition-colors"
+                      >
+                        <Upload size={12} /> Replace
+                      </button>
+                    </div>
+                  </>
+                ) : isUploading ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-brand-secondary/5">
+                    <div className="animate-spin w-6 h-6 border-2 border-brand-secondary border-t-transparent rounded-full" />
+                    <p className="text-xs text-gray-400 mt-2 font-heading">Uploading...</p>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                    <div className="w-10 h-10 rounded-xl bg-brand-secondary/10 flex items-center justify-center mb-3">
+                      <Upload size={18} className="text-brand-secondary" />
+                    </div>
+                    <p className="text-xs font-heading font-medium text-gray-500">Click to upload</p>
+                    <p className="text-[10px] text-gray-300 mt-1">PNG · JPG · ICO · SVG</p>
+                  </div>
+                )}
+              </div>
+
+              <input
+                ref={zone.ref}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUpload(zone.key, file);
+                  e.target.value = "";
+                }}
+              />
+
+              {currentUrl && (
+                <div className="mt-2">
+                  <button
+                    onClick={() => zone.ref.current?.click()}
+                    className="text-[11px] text-brand-secondary hover:text-brand-primary transition-colors font-heading"
+                  >
+                    Change file
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
