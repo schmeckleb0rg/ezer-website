@@ -26,6 +26,10 @@ const generalSans = localFont({
   variable: "--font-general-sans",
 });
 
+// Force dynamic rendering so generateMetadata re-fetches on every request
+// (prevents Vercel from caching a stale favicon/og URL from build time)
+export const revalidate = 0;
+
 export async function generateMetadata(): Promise<Metadata> {
   let faviconUrl: string | null = null;
   let ogImageUrl: string | null = null;
