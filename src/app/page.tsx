@@ -33,11 +33,35 @@ async function getHomeMedia(): Promise<Record<string, string>> {
 
 export const dynamic = "force-dynamic";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ezerenter.com");
+
 export default async function HomePage() {
   const media = await getHomeMedia();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Ezer Enterprises",
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.svg`,
+    description:
+      "Ezer Enterprises develops wearable devices that deliver life-saving medications in emergency situations.",
+    sameAs: [],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "investor relations",
+      url: `${SITE_URL}/#contact`,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main>
         <HeroSection mediaSrc={media["home_hero_media"] || null} />

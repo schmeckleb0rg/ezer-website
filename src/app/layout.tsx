@@ -26,6 +26,10 @@ const generalSans = localFont({
   variable: "--font-general-sans",
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ezerenter.com");
+
 // Force this layout to never be statically cached — ensures generateMetadata
 // always re-fetches the latest favicon/og URLs from Supabase on every request.
 export const dynamic = "force-dynamic";
@@ -53,7 +57,11 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: "Ezer Enterprises | Wearable Life-Saving Technology",
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: "Ezer Enterprises | Wearable Life-Saving Technology",
+      template: "%s | Ezer Enterprises",
+    },
     description:
       "Ezer Enterprises develops wearable devices that deliver life-saving medications in emergency situations. Discover our EzerGuard platform for opioid overdose, military, and civilian defense.",
     keywords: [
@@ -65,12 +73,24 @@ export async function generateMetadata(): Promise<Metadata> {
       "medical technology",
       "life-saving technology",
     ],
+    alternates: {
+      canonical: "/",
+    },
     ...(faviconUrl ? { icons: { icon: faviconUrl } } : {}),
     openGraph: {
       title: "Ezer Enterprises | Wearable Life-Saving Technology",
       description:
         "Wearable devices that deliver life-saving medications in emergency situations.",
       type: "website",
+      siteName: "Ezer Enterprises",
+      locale: "en_US",
+      ...(ogImageUrl ? { images: [{ url: ogImageUrl, width: 1200, height: 630, alt: "Ezer Enterprises - Wearable Life-Saving Technology" }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Ezer Enterprises | Wearable Life-Saving Technology",
+      description:
+        "Wearable devices that deliver life-saving medications in emergency situations.",
       ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
     },
   };
